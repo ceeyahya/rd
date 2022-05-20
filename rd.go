@@ -9,22 +9,22 @@ import (
 )
 
 type Book struct {
-	title      string
-	author     string
-	read       bool
-	createdAt  time.Time
-	finishedAt time.Time
+	Title      string
+	Author     string
+	Read       bool
+	CreatedAt  time.Time
+	FinishedAt time.Time
 }
 
 type Bibliography []Book
 
 func (b *Bibliography) AddBook(book Book) {
 	newBook := Book{
-		title:      book.title,
-		author:     book.author,
-		read:       book.read,
-		createdAt:  time.Now(),
-		finishedAt: time.Time{},
+		Title:      book.Title,
+		Author:     book.Author,
+		Read:       book.Read,
+		CreatedAt:  time.Now(),
+		FinishedAt: time.Time{},
 	}
 
 	*b = append(*b, newBook)
@@ -36,8 +36,8 @@ func (b *Bibliography) MarkAsFinished(i int) error {
 		return fmt.Errorf("Book number %d does not exist", i)
 	}
 
-	biblio[i-1].read = true
-	biblio[i-1].finishedAt = time.Now()
+	biblio[i-1].Read = true
+	biblio[i-1].FinishedAt = time.Now()
 
 	return nil
 }
@@ -69,8 +69,9 @@ func (b *Bibliography) GetAllBooks(filename string) error {
 		return fmt.Errorf("error encoutered while saving to %s. Stack Trace: %s", filename, err)
 	}
 
-  if len(file) == 0 {
-    return fmt.Errorf("the requested file is empty")
-  }
-	return nil
+	if len(file) == 0 {
+		return fmt.Errorf("the requested file is empty")
+	}
+
+	return json.Unmarshal(file, b)
 }
