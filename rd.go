@@ -1,7 +1,10 @@
 package rd
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -36,5 +39,38 @@ func (b *Bibliography) MarkAsFinished(i int) error {
 	biblio[i-1].read = true
 	biblio[i-1].finishedAt = time.Now()
 
+	return nil
+}
+
+func (b *Bibliography) DeleteBook(i int) error {
+	biblio := *b
+	if i <= 0 || i > len(biblio) {
+		return fmt.Errorf("Book number %d does not exist", i)
+	}
+
+	*b = append(biblio[:i-1], biblio[i:]...)
+	return nil
+}
+
+func (b *Bibliography) Save(filename string) error {
+	json, err := json.Marshal(b)
+	if err != nil {
+		return fmt.Errorf("error encoutered while saving to %s. Stack Trace: %s", filename, err)
+	}
+	return os.WriteFile(filename, json, 0644)
+}
+
+func (b *Bibliography) GetAllBooks(filename string) error {
+	file, err := os.ReadFile(filename)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("the requested file does not exist please try another file name")
+		}
+		return fmt.Errorf("error encoutered while saving to %s. Stack Trace: %s", filename, err)
+	}
+
+  if len(file) == 0 {
+    return fmt.Errorf("the requested file is empty")
+  }
 	return nil
 }
