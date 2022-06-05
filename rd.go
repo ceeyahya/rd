@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"time"
 )
@@ -17,6 +18,18 @@ type Book struct {
 }
 
 type Bibliography []Book
+
+func (b *Bibliography) String() string {
+	formatted := ""
+	for i, b := range *b {
+		prefix := "  "
+		if b.Read {
+			prefix = "✓ "
+		}
+		formatted += fmt.Sprintf("%s%d: %s by %s\n", prefix, i+1, b.Title, b.Author)
+	}
+	return formatted
+}
 
 func (b *Bibliography) AddBook(book Book) {
 	newBook := Book{
@@ -57,7 +70,7 @@ func (b *Bibliography) Save(filename string) error {
 	if err != nil {
 		return fmt.Errorf("error encoutered while saving to %s. Stack Trace: %s", filename, err)
 	}
-	return os.WriteFile(filename, json, 0644)
+	return ioutil.WriteFile(filename, json, 0644)
 }
 
 func (b *Bibliography) GetAllBooks(filename string) error {

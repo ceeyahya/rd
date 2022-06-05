@@ -28,13 +28,7 @@ func main() {
 
 	switch {
 	case *list:
-		if err := b.GetAllBooks(booksFileName); err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
-		for _, item := range *b {
-			fmt.Println(item.Title)
-		}
+		fmt.Print(b)
 
 	case *read > 0:
 		if err := b.MarkAsFinished(*read); err != nil {

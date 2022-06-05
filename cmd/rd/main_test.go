@@ -66,7 +66,7 @@ func TestCLI(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		expected := book.Title + "\n"
+		expected := fmt.Sprintf(" 1: %s by %s\n", book.Title, book.Author)
 
 		if expected != string(out) {
 			t.Errorf("expected %q, instead got %q", expected, string(out))
