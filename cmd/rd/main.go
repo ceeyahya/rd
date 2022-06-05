@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -10,10 +11,23 @@ import (
 const booksFileName = ".books.json"
 
 func main() {
+
+	title := flag.String("title", "", "Book to be added to the bibliography")
+	author := flag.String("author", "", "Author of the book to be added to the bibliography")
+	list := flag.Bool("list", false, "List the bibliography")
+	read := flag.Int("read", 0, "Mark book as read")
+
+	flag.Parse()
+
 	b := &rd.Bibliography{}
 
+	if err := b.GetAllBooks(booksFileName); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
 	switch {
-	case len(os.Args) == 1:
+	case *list:
 		if err := b.GetAllBooks(booksFileName); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
@@ -22,18 +36,29 @@ func main() {
 			fmt.Println(item.Title)
 		}
 
-	default:
-		title := os.Args[1]
-		author := os.Args[2]
-		book := rd.Book{
-			Title:  title,
-			Author: author,
+	case *read > 0:
+		if err := b.MarkAsFinished(*read); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
 		}
-
-		b.AddBook(book)
 		if err := b.Save(booksFileName); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
+
+	case *title != "" && *author != "":
+		newB := rd.Book{
+			Title:  *title,
+			Author: *author,
+		}
+		b.AddBook(newB)
+		if err := b.Save(booksFileName); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+	default:
+		fmt.Fprintln(os.Stderr, "The flag(s) provided was not recognized")
+		os.Exit(1)
 	}
 }

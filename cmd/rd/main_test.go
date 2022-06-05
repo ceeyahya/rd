@@ -53,14 +53,14 @@ func TestCLI(t *testing.T) {
 	path := filepath.Join(dir, binName)
 
 	t.Run("AddBook", func(t *testing.T) {
-		cmd := exec.Command(path, book.Title, book.Author)
+		cmd := exec.Command(path, "-title", book.Title, "-author", book.Author)
 		if err := cmd.Run(); err != nil {
 			t.Fatal(err)
 		}
 	})
 
 	t.Run("ListBooks", func(t *testing.T) {
-		cmd := exec.Command(path)
+		cmd := exec.Command(path, "-list")
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			t.Fatal(err)
