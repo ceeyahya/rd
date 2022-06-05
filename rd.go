@@ -2,9 +2,7 @@ package rd
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"time"
 )
@@ -70,14 +68,14 @@ func (b *Bibliography) Save(filename string) error {
 	if err != nil {
 		return fmt.Errorf("error encoutered while saving to %s. Stack Trace: %s", filename, err)
 	}
-	return ioutil.WriteFile(filename, json, 0644)
+	return os.WriteFile(filename, json, 0644)
 }
 
 func (b *Bibliography) GetAllBooks(filename string) error {
 	file, err := os.ReadFile(filename)
 	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return fmt.Errorf("the requested file does not exist please try another file name")
+		if os.IsNotExist(err) {
+			return nil
 		}
 		return fmt.Errorf("error encoutered while saving to %s. Stack Trace: %s", filename, err)
 	}

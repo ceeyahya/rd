@@ -8,9 +8,12 @@ import (
 	"github.com/ceeyahya/rd"
 )
 
-const booksFileName = ".books.json"
+var booksFileName = ".books.json"
 
 func main() {
+	if os.Getenv("BIBDIR") != "" {
+		booksFileName = os.Getenv("BIBDIR")
+	}
 
 	title := flag.String("title", "", "Book to be added to the bibliography")
 	author := flag.String("author", "", "Author of the book to be added to the bibliography")
